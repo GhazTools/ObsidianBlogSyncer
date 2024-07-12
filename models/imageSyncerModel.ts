@@ -1,5 +1,6 @@
 import { App, Modal, TFile } from "obsidian";
 import { TokenGranterWrapper } from "../utils/tokenGranterWrapper";
+import { pushChanges } from "../utils/git_helper";
 
 interface iImageData {
 	name: string;
@@ -7,10 +8,12 @@ interface iImageData {
 }
 
 export class ImageSyncerModel extends Modal {
+	app: App;
 	token_granter_wrapper: TokenGranterWrapper;
 
 	constructor(app: App) {
 		super(app);
+		this.app = app;
 		this.token_granter_wrapper = new TokenGranterWrapper();
 	}
 
@@ -20,6 +23,8 @@ export class ImageSyncerModel extends Modal {
 	}
 
 	async onOpen(): Promise<void> {
+		await pushChanges();
+
 		const { contentEl } = this;
 		contentEl.empty();
 
@@ -33,22 +38,6 @@ export class ImageSyncerModel extends Modal {
 	}
 
 	// PRIVATE METHODS
-	private async getImagesFolderFiles(): Promise<iImageData[]> {
-		const allFiles: TFile[] = this.app.vault.getFiles();
-
-		const imageFiles: TFile[] = allFiles.filter((file: TFile) =>
-			file.path.startsWith("__IMAGES__/")
-		);
-
-		const structuredFileNames: iImageData[] = [];
-
-		for (const file of imageFiles) {
-			structuredFileNames.push({ name: file.name, file: file });
-		}
-
-		return structuredFileNames;
-	}
-
 	private async createImageTable(): Promise<void> {
 		const table = this.contentEl.createEl("table");
 
@@ -63,7 +52,7 @@ export class ImageSyncerModel extends Modal {
 
 		const images: iImageData[] = await this.getImagesFolderFiles();
 
-		images.forEach((image) => {
+		for (const image of images) {
 			const row = table.createEl("tr");
 
 			const imagePath = app.vault.getResourcePath(image.file);
@@ -84,6 +73,8 @@ export class ImageSyncerModel extends Modal {
 			const publishButton = publishCell.createEl("button", {
 				text: "Publish",
 			});
+			publishButton.disabled = true;
+
 			publishButton.addEventListener("click", () => {
 				console.log("Publish clicked for", image.name);
 			});
@@ -92,9 +83,27 @@ export class ImageSyncerModel extends Modal {
 			const releaseButton = releaseCell.createEl("button", {
 				text: "Release",
 			});
+			releaseButton.disabled = true;
+
 			releaseButton.addEventListener("click", () => {
 				console.log("Release clicked for", image.name);
 			});
-		});
+		}
+	}
+
+	private async getImagesFolderFiles(): Promise<iImageData[]> {
+		const allFiles: TFile[] = this.app.vault.getFiles();
+
+		const imageFiles: TFile[] = allFiles.filter((file: TFile) =>
+			file.path.startsWith("__IMAGES__/")
+		);
+
+		const structuredFileNames: iImageData[] = [];
+
+		for (const file of imageFiles) {
+			structuredFileNames.push({ name: file.name, file: file });
+		}
+
+		return structuredFileNames;
 	}
 }
