@@ -10,7 +10,10 @@ export async function pushChanges(): Promise<void> {
 		await executeGitCommand("git push", basePath);
 		console.log("Changes pushed successfully.");
 	} catch (error) {
-		console.error("Failed to push changes:", error);
+		console.log(
+			"Failed to push changes, probably no changes to make:",
+			error
+		);
 	}
 }
 

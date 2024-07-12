@@ -1,4 +1,5 @@
 import { App, Modal, TFile } from "obsidian";
+import { release } from "os";
 import {
 	BlogUpdaterWrapper,
 	ImageStatusResponse,
@@ -78,21 +79,11 @@ export class ImageSyncerModel extends Modal {
 			});
 			publishButton.disabled = imageStatus.published;
 
-			publishButton.addEventListener("click", () => {
-				console.log("Publish clicked for", image.name);
-			});
-
 			const releaseCell = row.createEl("td");
 			const releaseButton = releaseCell.createEl("button", {
 				text: "Release",
 			});
 			releaseButton.disabled = imageStatus.released;
-
-			releaseButton.addEventListener("click", () => {
-				console.log("Release clicked for", image.name);
-				this.blog_updater_wrapper.updateImageRelease(image.name, true);
-				releaseButton.disabled = true;
-			});
 
 			const deleteCell = row.createEl("td");
 			const deleteButton = deleteCell.createEl("button", {
@@ -105,8 +96,52 @@ export class ImageSyncerModel extends Modal {
 			deleteButton.style.padding = "5px 10px";
 			deleteButton.style.borderRadius = "5px";
 			deleteButton.style.cursor = "pointer";
+			deleteButton.disabled = !imageStatus.released;
 
-			deleteButton.addEventListener("click", async () => {});
+			publishButton.addEventListener("click", async () => {
+				console.log("Publish clicked for", image.name);
+
+				await this.blog_updater_wrapper.syncRepo();
+
+				if (await this.blog_updater_wrapper.publishImage(image.name)) {
+					publishButton.disabled = true;
+					releaseButton.disabled = false;
+					deleteButton.disabled = true;
+
+					await this.blog_updater_wrapper.syncRepo();
+				}
+			});
+
+			releaseButton.addEventListener("click", async () => {
+				console.log("Release clicked for", image.name);
+
+				await this.blog_updater_wrapper.syncRepo();
+
+				if (
+					await this.blog_updater_wrapper.updateImageRelease(
+						image.name,
+						true
+					)
+				) {
+					releaseButton.disabled = true;
+
+					await this.blog_updater_wrapper.syncRepo();
+				}
+			});
+
+			deleteButton.addEventListener("click", async () => {
+				console.log("Delete clicked for", image.name);
+
+				await this.blog_updater_wrapper.syncRepo();
+
+				if (await this.blog_updater_wrapper.deleteImage(image.name)) {
+					publishButton.disabled = false;
+					releaseButton.disabled = false;
+					deleteButton.disabled = true;
+
+					await this.blog_updater_wrapper.syncRepo();
+				}
+			});
 		}
 	}
 

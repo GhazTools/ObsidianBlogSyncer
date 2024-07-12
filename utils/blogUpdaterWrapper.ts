@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BaseRequest, TokenGranterWrapper } from "./tokenGranterWrapper";
+import { pushChanges } from "./gitHelper";
 
 interface PublishImageRequest extends BaseRequest {
 	image_name: string;
@@ -19,6 +20,10 @@ export interface ImageStatusResponse {
 	published: boolean;
 }
 
+interface DeleteImageRequest extends BaseRequest {
+	image_name: string;
+}
+
 export class BlogUpdaterWrapper {
 	token_granter_wrapper: TokenGranterWrapper;
 	blog_updater_url: string;
@@ -29,12 +34,15 @@ export class BlogUpdaterWrapper {
 	}
 
 	async syncRepo(): Promise<void> {
+		await pushChanges();
+
 		const syncUrl = `${this.blog_updater_url}/vault/sync`;
 
-		console.log(await this.token_granter_wrapper.getBaseRequest());
+		const request: BaseRequest =
+			await this.token_granter_wrapper.getBaseRequest();
 
 		try {
-			axios.post(syncUrl, this.token_granter_wrapper.getBaseRequest(), {
+			axios.post(syncUrl, request, {
 				headers: {
 					"Content-Type": "application/json",
 				},
@@ -147,5 +155,37 @@ export class BlogUpdaterWrapper {
 			released: false,
 			published: false,
 		};
+	}
+
+	async deleteImage(imageName: string): Promise<boolean> {
+		const deleteUrl = `${this.blog_updater_url}/images/delete`;
+
+		const request: DeleteImageRequest = {
+			...(await this.token_granter_wrapper.getBaseRequest()),
+			image_name: imageName,
+		};
+
+		try {
+			const response = await axios.post(deleteUrl, request, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (response.status === 200) {
+				console.log("Deleted image", imageName);
+				return true;
+			} else {
+				console.log(
+					"Failed to delete image, error:",
+					response.statusText
+				);
+				return false;
+			}
+		} catch (error) {
+			console.log("Failed to delete image:", error);
+		}
+
+		return false;
 	}
 }
