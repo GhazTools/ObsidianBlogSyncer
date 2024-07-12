@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export interface BaseRequest {
-	username: string;
-	tokenn: string;
+	user: string;
+	token: string;
 }
 
 export class TokenGranterWrapper {
@@ -20,8 +20,8 @@ export class TokenGranterWrapper {
 
 	async getBaseRequest(): Promise<BaseRequest> {
 		return {
-			username: this.request_data.username as string,
-			tokenn: await this.getAccessToken(),
+			user: this.request_data.username as string,
+			token: await this.getAccessToken(),
 		};
 	}
 
