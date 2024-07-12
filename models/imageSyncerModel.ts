@@ -1,6 +1,6 @@
 import { App, Modal, TFile } from "obsidian";
 import { TokenGranterWrapper } from "../utils/tokenGranterWrapper";
-import { pushChanges } from "../utils/git_helper";
+import { pushChanges } from "../utils/gitHelper";
 
 interface iImageData {
 	name: string;
