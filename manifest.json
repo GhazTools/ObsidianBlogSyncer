@@ -1,0 +1,11 @@
+{
+	"id": "obsidian-blog-syncer",
+	"name": "Obsidian Blog Syncer",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Allows me to easily connect obsidian to my blog",
+	"author": "Obsidian",
+	"authorUrl": "https://obsidian.md",
+	"fundingUrl": "https://obsidian.md/pricing",
+	"isDesktopOnly": false
+}
