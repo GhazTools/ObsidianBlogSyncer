@@ -1,5 +1,4 @@
 import { App, Modal, TFile } from "obsidian";
-import { TokenGranterWrapper } from "../utils/tokenGranterWrapper";
 import { pushChanges } from "../utils/gitHelper";
 
 interface iImageData {
@@ -9,12 +8,10 @@ interface iImageData {
 
 export class ImageSyncerModel extends Modal {
 	app: App;
-	token_granter_wrapper: TokenGranterWrapper;
 
 	constructor(app: App) {
 		super(app);
 		this.app = app;
-		this.token_granter_wrapper = new TokenGranterWrapper();
 	}
 
 	onClose() {

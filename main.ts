@@ -1,6 +1,7 @@
 import { Plugin } from "obsidian";
 import { ImageSyncerModel } from "./models/imageSyncerModel";
 import * as dotenv from "dotenv";
+import { TokenGranterWrapper } from "utils/tokenGranterWrapper";
 
 const basePath = (app.vault.adapter as any).basePath;
 dotenv.config({
@@ -9,7 +10,11 @@ dotenv.config({
 });
 
 export default class MyPlugin extends Plugin {
+	token_granter_wrapper: TokenGranterWrapper;
+
 	async onload() {
+		this.token_granter_wrapper = new TokenGranterWrapper();
+
 		const imageIconElement = this.addRibbonIcon(
 			"dice",
 			"Blog Image Syncer",

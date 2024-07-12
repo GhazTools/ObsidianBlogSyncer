@@ -1,5 +1,10 @@
 import axios from "axios";
 
+export interface BaseRequest {
+	username: string;
+	tokenn: string;
+}
+
 export class TokenGranterWrapper {
 	token_granter_url: string;
 	request_data: Record<string, string | boolean>;
@@ -13,7 +18,14 @@ export class TokenGranterWrapper {
 		} as const;
 	}
 
-	async getAccessToken(): Promise<string> {
+	async getBaseRequest(): Promise<BaseRequest> {
+		return {
+			username: this.request_data.username as string,
+			tokenn: await this.getAccessToken(),
+		};
+	}
+
+	private async getAccessToken(): Promise<string> {
 		const grantUrl = `${this.token_granter_url}/token/grant`;
 
 		try {
