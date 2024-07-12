@@ -1,25 +1,28 @@
-import { Plugin } from "obsidian";
-import { ImageSyncerModel } from "./models/imageSyncerModel";
 import * as dotenv from "dotenv";
-import { TokenGranterWrapper } from "utils/tokenGranterWrapper";
-
-const basePath = (app.vault.adapter as any).basePath;
-dotenv.config({
-	path: `${basePath}/.obsidian/plugins/obsidian-blog-syncer/.env`,
-	debug: false,
-});
+import { Plugin } from "obsidian";
+import { BlogUpdaterWrapper } from "utils/blogUpdaterWrapper";
+import { ImageSyncerModel } from "./models/imageSyncerModel";
 
 export default class MyPlugin extends Plugin {
-	token_granter_wrapper: TokenGranterWrapper;
+	blog_updater_wrapper: BlogUpdaterWrapper;
 
 	async onload() {
-		this.token_granter_wrapper = new TokenGranterWrapper();
+		const basePath = (app.vault.adapter as any).basePath;
+		dotenv.config({
+			path: `${basePath}/.obsidian/plugins/obsidian-blog-syncer/.env`,
+			debug: false,
+		});
+
+		this.blog_updater_wrapper = new BlogUpdaterWrapper();
 
 		const imageIconElement = this.addRibbonIcon(
 			"dice",
 			"Blog Image Syncer",
 			(evt: MouseEvent) => {
-				const modal = new ImageSyncerModel(this.app);
+				const modal = new ImageSyncerModel(
+					this.app,
+					this.blog_updater_wrapper
+				);
 				modal.open();
 			}
 		);

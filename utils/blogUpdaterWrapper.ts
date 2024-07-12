@@ -1,5 +1,23 @@
 import axios from "axios";
-import { TokenGranterWrapper } from "./tokenGranterWrapper";
+import { BaseRequest, TokenGranterWrapper } from "./tokenGranterWrapper";
+
+interface PublishImageRequest extends BaseRequest {
+	image_name: string;
+}
+
+interface UpdateImageReleaseRequest extends BaseRequest {
+	image_name: string;
+	release: boolean;
+}
+
+interface ImageStatusRequest extends BaseRequest {
+	image_name: string;
+}
+
+export interface ImageStatusResponse {
+	released: boolean;
+	published: boolean;
+}
 
 export class BlogUpdaterWrapper {
 	token_granter_wrapper: TokenGranterWrapper;
@@ -10,8 +28,10 @@ export class BlogUpdaterWrapper {
 		this.blog_updater_url = process.env.BLOG_UPDATER_URL as string;
 	}
 
-	syncRepo(): void {
+	async syncRepo(): Promise<void> {
 		const syncUrl = `${this.blog_updater_url}/vault/sync`;
+
+		console.log(await this.token_granter_wrapper.getBaseRequest());
 
 		try {
 			axios.post(syncUrl, this.token_granter_wrapper.getBaseRequest(), {
@@ -24,15 +44,108 @@ export class BlogUpdaterWrapper {
 		}
 	}
 
-	publishImage(imageName: string): boolean {
+	async publishImage(imageName: string): Promise<boolean> {
+		const publishUrl = `${this.blog_updater_url}/images/publish`;
+
+		const request: PublishImageRequest = {
+			...(await this.token_granter_wrapper.getBaseRequest()),
+			image_name: imageName,
+		};
+
+		try {
+			const response = await axios.post(publishUrl, request, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (response.status === 200) {
+				return true;
+			} else {
+				console.log(
+					"Failed to publish image, error:",
+					response.statusText
+				);
+				return false;
+			}
+		} catch (error) {
+			console.log("Failed to publish image:", error);
+		}
+
 		return false;
 	}
 
-	updateImageRelease(imageName: string, release: boolean): boolean {
+	async updateImageRelease(
+		imageName: string,
+		release: boolean
+	): Promise<boolean> {
+		const publishUrl = `${this.blog_updater_url}/images/updateImageRelease`;
+
+		const request: UpdateImageReleaseRequest = {
+			...(await this.token_granter_wrapper.getBaseRequest()),
+			image_name: imageName,
+			release,
+		};
+
+		console.log("Image request here", request);
+
+		try {
+			const response = await axios.post(publishUrl, request, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (response.status === 200) {
+				console.log("Released image:", imageName);
+				return true;
+			} else {
+				console.log(
+					"Failed to update image release, error:",
+					response.statusText
+				);
+				return false;
+			}
+		} catch (error) {
+			console.log("Failed to update image release:", error);
+		}
+
 		return false;
 	}
 
-	checkIfImageExists(imageName: string): boolean {
-		return false;
+	async getImageStatus(imageName: string): Promise<ImageStatusResponse> {
+		const iamgeStatusUrl = `${this.blog_updater_url}/images/imageStatus`;
+
+		const request: ImageStatusRequest = {
+			...(await this.token_granter_wrapper.getBaseRequest()),
+			image_name: imageName,
+		};
+
+		try {
+			const response = await axios.post(iamgeStatusUrl, request, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (response.status >= 400) {
+				return {
+					released: false,
+					published: false,
+				};
+			} else {
+				const formattedResponse: ImageStatusResponse = JSON.parse(
+					response.data
+				);
+				return formattedResponse;
+			}
+		} catch (error) {
+			console.log("Failed to get image status:", error);
+		}
+
+		return {
+			released: false,
+			published: false,
+		};
 	}
 }

@@ -1,5 +1,8 @@
 import { App, Modal, TFile } from "obsidian";
-import { pushChanges } from "../utils/gitHelper";
+import {
+	BlogUpdaterWrapper,
+	ImageStatusResponse,
+} from "utils/blogUpdaterWrapper";
 
 interface iImageData {
 	name: string;
@@ -7,11 +10,12 @@ interface iImageData {
 }
 
 export class ImageSyncerModel extends Modal {
-	app: App;
+	blog_updater_wrapper: BlogUpdaterWrapper;
 
-	constructor(app: App) {
+	constructor(app: App, blog_updater_wrapper: BlogUpdaterWrapper) {
 		super(app);
-		this.app = app;
+
+		this.blog_updater_wrapper = blog_updater_wrapper;
 	}
 
 	onClose() {
@@ -20,16 +24,13 @@ export class ImageSyncerModel extends Modal {
 	}
 
 	async onOpen(): Promise<void> {
-		await pushChanges();
-
 		const { contentEl } = this;
 		contentEl.empty();
 
-		const title = contentEl.createEl("h1");
-		title.textContent = "Blog Image Syncer";
+		await this.blog_updater_wrapper.syncRepo();
 
-		const image_section = contentEl.createEl("h2");
-		image_section.textContent = "Unreleased Images";
+		const title = contentEl.createEl("h1");
+		title.textContent = "Blog Image Syncer Tool";
 
 		await this.createImageTable();
 	}
@@ -41,11 +42,13 @@ export class ImageSyncerModel extends Modal {
 		const cellStyle = "padding: 0 20px;";
 
 		const headerRow = table.createEl("tr");
-		["Image", "Image Name", "Publish", "Release"].forEach((headerText) => {
-			const headerCell = headerRow.createEl("th");
-			headerCell.textContent = headerText;
-			headerCell.setAttribute("style", cellStyle); // Apply the cell style
-		});
+		["Image", "Image Name", "Publish", "Release", "Delete"].forEach(
+			(headerText) => {
+				const headerCell = headerRow.createEl("th");
+				headerCell.textContent = headerText;
+				headerCell.setAttribute("style", cellStyle); // Apply the cell style
+			}
+		);
 
 		const images: iImageData[] = await this.getImagesFolderFiles();
 
@@ -66,11 +69,14 @@ export class ImageSyncerModel extends Modal {
 			const nameCell = row.createEl("td");
 			nameCell.textContent = image.name;
 
+			const imageStatus: ImageStatusResponse =
+				await this.blog_updater_wrapper.getImageStatus(image.name);
+
 			const publishCell = row.createEl("td");
 			const publishButton = publishCell.createEl("button", {
 				text: "Publish",
 			});
-			publishButton.disabled = true;
+			publishButton.disabled = imageStatus.published;
 
 			publishButton.addEventListener("click", () => {
 				console.log("Publish clicked for", image.name);
@@ -80,11 +86,27 @@ export class ImageSyncerModel extends Modal {
 			const releaseButton = releaseCell.createEl("button", {
 				text: "Release",
 			});
-			releaseButton.disabled = true;
+			releaseButton.disabled = imageStatus.released;
 
 			releaseButton.addEventListener("click", () => {
 				console.log("Release clicked for", image.name);
+				this.blog_updater_wrapper.updateImageRelease(image.name, true);
+				releaseButton.disabled = true;
 			});
+
+			const deleteCell = row.createEl("td");
+			const deleteButton = deleteCell.createEl("button", {
+				text: "Delete",
+			});
+
+			deleteButton.style.backgroundColor = "#ff4d4d"; // Red background
+			deleteButton.style.color = "white";
+			deleteButton.style.border = "none";
+			deleteButton.style.padding = "5px 10px";
+			deleteButton.style.borderRadius = "5px";
+			deleteButton.style.cursor = "pointer";
+
+			deleteButton.addEventListener("click", async () => {});
 		}
 	}
 
