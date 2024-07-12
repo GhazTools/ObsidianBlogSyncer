@@ -2,12 +2,11 @@ import { exec } from "child_process";
 
 export async function pushChanges(): Promise<void> {
 	try {
-		// Stage changes
-		const basePath = (app.vault.adapter as any).basePath; // Removed the '/*' from basePath
+		const basePath = (app.vault.adapter as any).basePath;
 
-		await executeGitCommand(`git add .`, basePath); // Use basePath as the working directory			// Commit changes
+		await executeGitCommand(`git add .`, basePath);
 		await executeGitCommand('git commit -m "Sync images"', basePath);
-		// Push changes
+
 		await executeGitCommand("git push", basePath);
 		console.log("Changes pushed successfully.");
 	} catch (error) {
