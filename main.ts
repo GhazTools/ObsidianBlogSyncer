@@ -1,10 +1,12 @@
 import { Plugin } from "obsidian";
 import { ImageSyncerModel } from "./models/imageSyncerModel";
+import * as dotenv from "dotenv";
 
 export default class MyPlugin extends Plugin {
 	async onload() {
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon(
+		dotenv.config();
+
+		const imageIconElement = this.addRibbonIcon(
 			"dice",
 			"Blog Image Syncer",
 			(evt: MouseEvent) => {
@@ -12,8 +14,7 @@ export default class MyPlugin extends Plugin {
 				modal.open();
 			}
 		);
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass("my-plugin-ribbon-class");
+		imageIconElement.addClass("my-plugin-ribbon-class");
 	}
 
 	onunload() {}
