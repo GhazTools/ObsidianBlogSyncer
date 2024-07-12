@@ -1,6 +1,6 @@
 {
 	"id": "obsidian-blog-syncer",
-	"name": "Obsidian Blog Syncer",
+	"name": "Blog Syncer",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Allows me to easily connect obsidian to my blog",
