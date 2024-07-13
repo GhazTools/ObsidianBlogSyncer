@@ -1,9 +1,6 @@
 import { App, Modal, TFile } from "obsidian";
-import { release } from "os";
-import {
-	BlogUpdaterWrapper,
-	ImageStatusResponse,
-} from "utils/blogUpdaterWrapper";
+import { BlogUpdaterWrapper } from "utils/blogUpdaterWrapper";
+import { ImageStatus } from "../utils/blogUpdaterRequester/base";
 
 interface iImageData {
 	name: string;
@@ -70,7 +67,7 @@ export class ImageSyncerModel extends Modal {
 			const nameCell = row.createEl("td");
 			nameCell.textContent = image.name;
 
-			const imageStatus: ImageStatusResponse =
+			const imageStatus: ImageStatus =
 				await this.blog_updater_wrapper.getImageStatus(image.name);
 
 			const publishCell = row.createEl("td");
