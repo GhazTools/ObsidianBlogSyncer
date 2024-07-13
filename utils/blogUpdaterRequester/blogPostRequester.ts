@@ -1,5 +1,10 @@
-import { TokenGranterWrapper } from "utils/tokenGranterWrapper";
+import axios from "axios";
+import { BaseRequest, TokenGranterWrapper } from "utils/tokenGranterWrapper";
 import { BlogUpdaterRequester, ImageStatus } from "./base";
+
+interface PublishBlogPostRequest extends BaseRequest {
+	post_name: string;
+}
 
 export class BlogPostRequester extends BlogUpdaterRequester {
 	constructor(
@@ -10,10 +15,40 @@ export class BlogPostRequester extends BlogUpdaterRequester {
 	}
 
 	async publish(blogPostName: string): Promise<boolean> {
+		const publishUrl = `${this.blog_updater_url}/blogPosts/publish`;
+
+		const request: PublishBlogPostRequest = {
+			...(await this.token_granter_wrapper.getBaseRequest()),
+			post_name: blogPostName,
+		};
+
+		try {
+			const response = await axios.post(publishUrl, request, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (response.status === 200) {
+				return true;
+			} else {
+				console.log(
+					"Failed to publish image, error:",
+					response.statusText
+				);
+				return false;
+			}
+		} catch (error) {
+			console.log("Failed to publish image:", error);
+		}
+
+		return false;
 		return false;
 	}
 
 	async delete(blogPostName: string): Promise<boolean> {
+		const deleteUrl = `${this.blog_updater_url}/blogPosts/delete`;
+
 		return false;
 	}
 
@@ -21,10 +56,14 @@ export class BlogPostRequester extends BlogUpdaterRequester {
 		blogPostName: string,
 		release: boolean
 	): Promise<boolean> {
+		const updateReleaseUrl = `${this.blog_updater_url}/blogPosts/updatePostRelease`;
+
 		return false;
 	}
 
 	async getStatus(blogPostName: string): Promise<ImageStatus> {
+		const statusUrl = `${this.blog_updater_url}/blogPosts/blogPostStatus`;
+
 		return {
 			released: false,
 			published: false,
