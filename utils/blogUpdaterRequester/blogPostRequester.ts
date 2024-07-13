@@ -5,6 +5,9 @@ import { BlogUpdaterRequester, ImageStatus } from "./base";
 interface PublishBlogPostRequest extends BaseRequest {
 	post_name: string;
 }
+interface DeleteBlogPostRequest extends BaseRequest {
+	post_name: string;
+}
 
 export class BlogPostRequester extends BlogUpdaterRequester {
 	constructor(
@@ -30,24 +33,49 @@ export class BlogPostRequester extends BlogUpdaterRequester {
 			});
 
 			if (response.status === 200) {
+				console.log("Published post", blogPostName);
 				return true;
 			} else {
 				console.log(
-					"Failed to publish image, error:",
+					"Failed to publish post, error:",
 					response.statusText
 				);
 				return false;
 			}
 		} catch (error) {
-			console.log("Failed to publish image:", error);
+			console.log("Failed to publish post:", error);
 		}
-
-		return false;
 		return false;
 	}
 
 	async delete(blogPostName: string): Promise<boolean> {
 		const deleteUrl = `${this.blog_updater_url}/blogPosts/delete`;
+
+		const request: DeleteBlogPostRequest = {
+			...(await this.token_granter_wrapper.getBaseRequest()),
+			post_name: blogPostName,
+		};
+
+		try {
+			const response = await axios.post(deleteUrl, request, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (response.status === 200) {
+				console.log("Deleted post", blogPostName);
+				return true;
+			} else {
+				console.log(
+					"Failed to delete post, error:",
+					response.statusText
+				);
+				return false;
+			}
+		} catch (error) {
+			console.log("Failed to delete post:", error);
+		}
 
 		return false;
 	}
