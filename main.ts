@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 import { Plugin } from "obsidian";
 import { BlogUpdaterWrapper } from "utils/blogUpdaterWrapper";
-import { ImageSyncerModel } from "./models/imageSyncerModel";
+import { SyncerModel } from "./models/syncerModel";
 
 export default class MyPlugin extends Plugin {
 	blog_updater_wrapper: BlogUpdaterWrapper;
@@ -19,7 +19,7 @@ export default class MyPlugin extends Plugin {
 			"dice",
 			"Blog Image Syncer",
 			(evt: MouseEvent) => {
-				const modal = new ImageSyncerModel(
+				const modal = new SyncerModel(
 					this.app,
 					this.blog_updater_wrapper
 				);

@@ -7,13 +7,17 @@ interface iImageData {
 	file: TFile;
 }
 
-export class ImageSyncerModel extends Modal {
+export class SyncerModel extends Modal {
 	blog_updater_wrapper: BlogUpdaterWrapper;
+	dynamicContentArea: HTMLDivElement;
 
 	constructor(app: App, blog_updater_wrapper: BlogUpdaterWrapper) {
 		super(app);
 
 		this.blog_updater_wrapper = blog_updater_wrapper;
+		this.dynamicContentArea = this.contentEl.createEl("div", {
+			cls: "dynamic-content",
+		});
 	}
 
 	onClose() {
@@ -23,19 +27,66 @@ export class ImageSyncerModel extends Modal {
 
 	async onOpen(): Promise<void> {
 		const { contentEl } = this;
-		contentEl.empty();
-
 		await this.blog_updater_wrapper.syncRepo();
 
-		const title = contentEl.createEl("h1");
-		title.textContent = "Blog Image Syncer Tool";
+		contentEl.empty();
+
+		this.injectStyles();
+		this.createTabs();
 
 		await this.createImageTable();
 	}
 
 	// PRIVATE METHODS
-	private async createImageTable(): Promise<void> {
-		const table = this.contentEl.createEl("table");
+	private injectStyles(): void {
+		const style = document.createElement("style");
+
+		style.textContent = `
+			.clickable-text {
+				cursor: pointer;
+				color: #F6F1D1; 
+				text-decoration: underline;
+			}
+			.clickable-text:hover {
+				color: #0B2027;
+			}
+		`;
+
+		document.head.appendChild(style);
+	}
+
+	private async createTabs() {
+		const { contentEl } = this;
+
+		const tabFunctions: Record<string, CallableFunction> = {
+			"Image Syncer Tool": this.createImageTable,
+			"Blog Post Syncer Tool": this.createBlogPostTable,
+		};
+
+		const table = contentEl.createEl("table");
+		const tabRow = table.createEl("tr");
+
+		for (const tabName in tabFunctions) {
+			const tabCell = tabRow.createEl("th");
+			tabCell.textContent = tabName;
+			tabCell.addClass("clickable-text"); // Add this class for styling
+
+			tabCell.addEventListener("click", async () => {
+				// Assuming tabFunctions[tabName] returns a function that can be awaited
+				await tabFunctions[tabName]();
+			});
+		}
+	}
+
+	private createBlogPostTable = async (): Promise<void> => {
+		console.log("HERE WE ARE");
+		this.dynamicContentArea.empty(); // Clear only the dynamic content area
+	};
+
+	private createImageTable = async (): Promise<void> => {
+		this.dynamicContentArea.empty(); // Clear only the dynamic content area
+
+		const table = this.dynamicContentArea.createEl("table");
 
 		const cellStyle = "padding: 0 20px;";
 
@@ -53,7 +104,7 @@ export class ImageSyncerModel extends Modal {
 		for (const image of images) {
 			const row = table.createEl("tr");
 
-			const imagePath = app.vault.getResourcePath(image.file);
+			const imagePath = this.app.vault.getResourcePath(image.file);
 
 			const imageCell = row.createEl("td");
 			imageCell.createEl("img", {
@@ -140,9 +191,9 @@ export class ImageSyncerModel extends Modal {
 				}
 			});
 		}
-	}
+	};
 
-	private async getImagesFolderFiles(): Promise<iImageData[]> {
+	private getImagesFolderFiles = async (): Promise<iImageData[]> => {
 		const allFiles: TFile[] = this.app.vault.getFiles();
 
 		const imageFiles: TFile[] = allFiles.filter((file: TFile) =>
@@ -156,5 +207,5 @@ export class ImageSyncerModel extends Modal {
 		}
 
 		return structuredFileNames;
-	}
+	};
 }
