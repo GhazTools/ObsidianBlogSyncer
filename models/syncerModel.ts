@@ -15,6 +15,8 @@ export class SyncerModel extends Modal {
 		super(app);
 
 		this.blog_updater_wrapper = blog_updater_wrapper;
+
+		this.createTabs();
 		this.dynamicContentArea = this.contentEl.createEl("div", {
 			cls: "dynamic-content",
 		});
@@ -26,13 +28,9 @@ export class SyncerModel extends Modal {
 	}
 
 	async onOpen(): Promise<void> {
-		const { contentEl } = this;
 		await this.blog_updater_wrapper.syncRepo();
 
-		contentEl.empty();
-
 		this.injectStyles();
-		this.createTabs();
 
 		await this.createImageTable();
 	}
