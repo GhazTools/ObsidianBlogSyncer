@@ -21,7 +21,7 @@ interface StatusBlogPostRequest extends BaseRequest {
 export class BlogPostRequester extends BlogUpdaterRequester {
 	constructor(
 		token_granter_wrapper: TokenGranterWrapper,
-		blog_updater_url: string
+		blog_updater_url: string,
 	) {
 		super(token_granter_wrapper, blog_updater_url);
 	}
@@ -47,7 +47,7 @@ export class BlogPostRequester extends BlogUpdaterRequester {
 			} else {
 				console.log(
 					"Failed to publish post, error:",
-					response.statusText
+					response.statusText,
 				);
 				return false;
 			}
@@ -78,7 +78,7 @@ export class BlogPostRequester extends BlogUpdaterRequester {
 			} else {
 				console.log(
 					"Failed to delete post, error:",
-					response.statusText
+					response.statusText,
 				);
 				return false;
 			}
@@ -91,7 +91,7 @@ export class BlogPostRequester extends BlogUpdaterRequester {
 
 	async updateRelease(
 		blogPostName: string,
-		release: boolean
+		release: boolean,
 	): Promise<boolean> {
 		const updateReleaseUrl = `${this.blog_updater_url}/blogPosts/updatePostRelease`;
 
@@ -114,7 +114,7 @@ export class BlogPostRequester extends BlogUpdaterRequester {
 			} else {
 				console.log(
 					"Failed to update blog post release, error:",
-					response.statusText
+					response.statusText,
 				);
 				return false;
 			}
@@ -146,7 +146,7 @@ export class BlogPostRequester extends BlogUpdaterRequester {
 				};
 			} else {
 				const formattedResponse: ImageStatus = JSON.parse(
-					response.data
+					response.data,
 				);
 				return formattedResponse;
 			}

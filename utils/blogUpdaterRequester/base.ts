@@ -11,7 +11,7 @@ export abstract class BlogUpdaterRequester {
 
 	constructor(
 		tokenGranterWrapper: TokenGranterWrapper,
-		blog_updater_url: string
+		blog_updater_url: string,
 	) {
 		this.token_granter_wrapper = tokenGranterWrapper;
 		this.blog_updater_url = blog_updater_url;
@@ -21,7 +21,7 @@ export abstract class BlogUpdaterRequester {
 	abstract delete(entityName: string): Promise<boolean>;
 	abstract updateRelease(
 		entityName: string,
-		release: boolean
+		release: boolean,
 	): Promise<boolean>;
 	abstract getStatus(entityName: string): Promise<ImageStatus>;
 }

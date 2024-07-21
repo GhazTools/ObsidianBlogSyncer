@@ -38,7 +38,7 @@ export class TokenGranterWrapper {
 		} catch (error) {
 			console.log(
 				"BlogSyncer - Failed to get access token:",
-				error.message
+				error.message,
 			);
 		}
 

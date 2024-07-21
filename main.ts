@@ -21,10 +21,10 @@ export default class MyPlugin extends Plugin {
 			(evt: MouseEvent) => {
 				const modal = new SyncerModel(
 					this.app,
-					this.blog_updater_wrapper
+					this.blog_updater_wrapper,
 				);
 				modal.open();
-			}
+			},
 		);
 		imageIconElement.addClass("my-plugin-ribbon-class");
 	}

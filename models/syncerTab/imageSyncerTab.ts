@@ -12,7 +12,7 @@ export class ImageSyncerTab extends SyncerTab {
 	constructor(
 		app: App,
 		element: HTMLDivElement,
-		blogUpdaterWrapper: BlogUpdaterWrapper
+		blogUpdaterWrapper: BlogUpdaterWrapper,
 	) {
 		super(app, blogUpdaterWrapper);
 	}
@@ -29,7 +29,7 @@ export class ImageSyncerTab extends SyncerTab {
 				const headerCell = headerRow.createEl("th");
 				headerCell.textContent = headerText;
 				headerCell.setAttribute("style", cellStyle); // Apply the cell style
-			}
+			},
 		);
 
 		const images: iImageData[] = await this.getImagesFolderFiles();
@@ -101,7 +101,7 @@ export class ImageSyncerTab extends SyncerTab {
 				if (
 					await this.blogUpdaterWrapper.updateImageRelease(
 						image.name,
-						true
+						true,
 					)
 				) {
 					releaseButton.disabled = true;
@@ -142,7 +142,7 @@ export class ImageSyncerTab extends SyncerTab {
 		const allFiles: TFile[] = this.app.vault.getFiles();
 
 		const imageFiles: TFile[] = allFiles.filter((file: TFile) =>
-			file.path.startsWith("__IMAGES__/")
+			file.path.startsWith("__IMAGES__/"),
 		);
 
 		const structuredFileNames: iImageData[] = [];

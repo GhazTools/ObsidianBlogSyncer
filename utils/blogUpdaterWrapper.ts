@@ -14,7 +14,7 @@ export class BlogUpdaterWrapper {
 		this.blog_updater_url = process.env.BLOG_UPDATER_URL as string;
 		this.image_requester = new ImageRequester(
 			this.token_granter_wrapper,
-			this.blog_updater_url
+			this.blog_updater_url,
 		);
 	}
 
@@ -47,7 +47,7 @@ export class BlogUpdaterWrapper {
 
 	async updateImageRelease(
 		imageName: string,
-		release: boolean
+		release: boolean,
 	): Promise<boolean> {
 		return await this.image_requester.updateRelease(imageName, release);
 	}

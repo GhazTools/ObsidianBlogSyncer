@@ -18,7 +18,7 @@ export class SyncerModel extends Modal {
 		this.imageTab = new ImageSyncerTab(
 			app,
 			this.dynamicContentArea,
-			blog_updater_wrapper
+			blog_updater_wrapper,
 		);
 
 		this.createTabs();
@@ -78,7 +78,7 @@ export class SyncerModel extends Modal {
 	}
 
 	private createBlogPostTable = async (
-		dynamicContentArea: HTMLDivElement
+		dynamicContentArea: HTMLDivElement,
 	): Promise<void> => {
 		console.log("HERE WE ARE");
 		dynamicContentArea.empty(); // Clear only the dynamic content area

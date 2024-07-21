@@ -14,7 +14,7 @@ export async function pushChanges(): Promise<void> {
 	} catch (error) {
 		console.log(
 			"Failed to push changes, probably no changes to make:",
-			error
+			error,
 		);
 	}
 }
@@ -37,14 +37,14 @@ async function checkForGitChanges(basePath: string): Promise<boolean> {
 
 function executeGitCommand(
 	command: string,
-	workingDirectory: string
+	workingDirectory: string,
 ): Promise<string> {
 	return new Promise((resolve, reject) => {
 		exec(command, { cwd: workingDirectory }, (error, stdout, stderr) => {
 			if (error) {
 				console.error(
 					`Error executing Git command in ${workingDirectory}:`,
-					stderr
+					stderr,
 				);
 				reject(error);
 				return;

@@ -22,7 +22,7 @@ interface DeleteImageRequest extends BaseRequest {
 export class ImageRequester extends BlogUpdaterRequester {
 	constructor(
 		token_granter_wrapper: TokenGranterWrapper,
-		blog_updater_url: string
+		blog_updater_url: string,
 	) {
 		super(token_granter_wrapper, blog_updater_url);
 	}
@@ -47,7 +47,7 @@ export class ImageRequester extends BlogUpdaterRequester {
 			} else {
 				console.log(
 					"Failed to publish image, error:",
-					response.statusText
+					response.statusText,
 				);
 				return false;
 			}
@@ -79,7 +79,7 @@ export class ImageRequester extends BlogUpdaterRequester {
 			} else {
 				console.log(
 					"Failed to delete image, error:",
-					response.statusText
+					response.statusText,
 				);
 				return false;
 			}
@@ -114,7 +114,7 @@ export class ImageRequester extends BlogUpdaterRequester {
 			} else {
 				console.log(
 					"Failed to update image release, error:",
-					response.statusText
+					response.statusText,
 				);
 				return false;
 			}
@@ -147,7 +147,7 @@ export class ImageRequester extends BlogUpdaterRequester {
 				};
 			} else {
 				const formattedResponse: ImageStatus = JSON.parse(
-					response.data
+					response.data,
 				);
 				return formattedResponse;
 			}
