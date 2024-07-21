@@ -1,7 +1,6 @@
 import { App, Modal } from "obsidian";
 import { BlogUpdaterWrapper } from "utils/blogUpdaterWrapper";
 import { ImageSyncerTab } from "./syncerTab/imageSyncerTab";
-import { SyncerTab } from "./syncerTab/syncerTab";
 
 export class SyncerModel extends Modal {
 	blog_updater_wrapper: BlogUpdaterWrapper;
