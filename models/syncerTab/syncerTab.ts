@@ -1,16 +1,18 @@
 import { App } from "obsidian";
+import { BlogUpdaterWrapper } from "utils/blogUpdaterWrapper";
 
 export abstract class SyncerTab {
 	app: App;
-	mainElement: HTMLDivElement;
+	blogUpdaterWrapper: BlogUpdaterWrapper;
 
-	constructor(app: App, element: HTMLDivElement) {
+	constructor(app: App, blogUpdaterWrapper: BlogUpdaterWrapper) {
 		this.app = app;
-		this.mainElement = element;
+		this.blogUpdaterWrapper = blogUpdaterWrapper;
 	}
 
-	abstract showTab(): void;
-	abstract publishHandler(objectName: string): boolean;
-	abstract releaseHandler(objectName: string): boolean;
-	abstract deleteHandler(objectName: string): boolean;
+	abstract showTab(mainElement: HTMLDivElement): void;
+
+	protected abstract publishHandler(objectName: string): boolean;
+	protected abstract releaseHandler(objectName: string): boolean;
+	protected abstract deleteHandler(objectName: string): boolean;
 }
