@@ -9,11 +9,7 @@ interface iImageData {
 }
 
 export class ImageSyncerTab extends SyncerTab {
-	constructor(
-		app: App,
-		element: HTMLDivElement,
-		blogUpdaterWrapper: BlogUpdaterWrapper,
-	) {
+	constructor(app: App, blogUpdaterWrapper: BlogUpdaterWrapper) {
 		super(app, blogUpdaterWrapper);
 	}
 

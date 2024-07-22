@@ -1,27 +1,27 @@
 import { App, Modal } from "obsidian";
 import { BlogUpdaterWrapper } from "utils/blogUpdaterWrapper";
 import { ImageSyncerTab } from "./syncerTab/imageSyncerTab";
+import { PostSyncerTab } from "./syncerTab/postSyncerTab";
 
 export class SyncerModel extends Modal {
 	blog_updater_wrapper: BlogUpdaterWrapper;
 	dynamicContentArea: HTMLDivElement;
+
 	imageTab: ImageSyncerTab;
+	postTab: PostSyncerTab;
 
 	constructor(app: App, blog_updater_wrapper: BlogUpdaterWrapper) {
 		super(app);
 
 		this.blog_updater_wrapper = blog_updater_wrapper;
+		this.imageTab = new ImageSyncerTab(app, blog_updater_wrapper);
+		this.postTab = new PostSyncerTab(app, blog_updater_wrapper);
+
+		this.createTabs();
+
 		this.dynamicContentArea = this.contentEl.createEl("div", {
 			cls: "dynamic-content",
 		});
-
-		this.imageTab = new ImageSyncerTab(
-			app,
-			this.dynamicContentArea,
-			blog_updater_wrapper,
-		);
-
-		this.createTabs();
 	}
 
 	onClose() {
@@ -60,7 +60,7 @@ export class SyncerModel extends Modal {
 
 		const tabFunctions: Record<string, CallableFunction> = {
 			"Image Syncer Tool": this.imageTab.showTab.bind(this.imageTab),
-			"Blog Post Syncer Tool": this.createBlogPostTable,
+			"Blog Post Syncer Tool": this.postTab.showTab.bind(this.postTab),
 		};
 
 		const table = contentEl.createEl("table");
@@ -76,11 +76,4 @@ export class SyncerModel extends Modal {
 			});
 		}
 	}
-
-	private createBlogPostTable = async (
-		dynamicContentArea: HTMLDivElement,
-	): Promise<void> => {
-		console.log("HERE WE ARE");
-		dynamicContentArea.empty(); // Clear only the dynamic content area
-	};
 }
