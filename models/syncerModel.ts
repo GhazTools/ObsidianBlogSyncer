@@ -59,8 +59,8 @@ export class SyncerModel extends Modal {
 		const { contentEl } = this;
 
 		const tabFunctions: Record<string, CallableFunction> = {
-			"Image Syncer Tool": this.imageTab.showTab.bind(this.imageTab),
-			"Blog Post Syncer Tool": this.postTab.showTab.bind(this.postTab),
+			"Image Syncer": this.imageTab.showTab.bind(this.imageTab),
+			"Blog Post Syncer": this.postTab.showTab.bind(this.postTab),
 		};
 
 		const table = contentEl.createEl("table");
